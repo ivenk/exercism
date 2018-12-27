@@ -2,28 +2,26 @@ package clock
 
 import "fmt"
 
-type Clock struct{
-	hour int
+type Clock struct {
+	hour   int
 	minute int
 }
 
-
 func New(hour int, minute int) Clock {
 	clockHelper := Clock{hour, minute}
-	fmt.Println(clockHelper.String())
 	return clockHelper.checkBounds()
 }
 
 func (clock Clock) Add(minute int) Clock {
 	clock.minute += minute
+	//	fmt.Printf("Clock minutes before bound check %d\n", clock.minute)
 	return clock.checkBounds()
 }
 
-func (clock Clock) Subtract(minute int) Clock{
+func (clock Clock) Subtract(minute int) Clock {
 	// invert minutes
 	minute = minute * -1
-	clock.Add(minute)
-	return clock
+	return clock.Add(minute)
 }
 
 func (clock Clock) String() string {
@@ -49,8 +47,6 @@ func (clock Clock) String() string {
 }
 
 func (clock Clock) checkBounds() Clock {
-
-
 	// are we over 59 minutes
 	if clock.minute > 59 {
 		// next hour
@@ -59,12 +55,21 @@ func (clock Clock) checkBounds() Clock {
 	}
 	// are we under 0 minutes
 	if clock.minute < 0 {
-		clock.hour = clock.hour - int(clock.minute/60)
+		var sub = int(clock.minute / 60)
+		if sub < 0 {
+			sub = sub * -1
+		}
+		clock.hour = clock.hour - sub
 		if (clock.minute % 60) != 0 {
 			clock.hour = clock.hour - 1
+		} else {
+			clock.minute = clock.minute % 60
+
 		}
-		clock.minute += 60
 		clock.minute = clock.minute % 60
+		if clock.minute != 0 {
+			clock.minute += 60
+		}
 	}
 
 	// are we over 23 hours
