@@ -21,13 +21,16 @@ func PrivateKey(prime *big.Int) *big.Int {
 	return key
 }
 
-func PublicKey(privateKey *big.Int, p *big.Int, g *big.Int) *big.Int {
+func PublicKey(privateKey *big.Int, p *big.Int, g int64) *big.Int {
 	mod := new(big.Int)
-	return mod.Mod((g.Exp(g, privateKey, nil)), p)
+	bigG := big.NewInt(g)
+	return mod.Mod((bigG.Exp(bigG, privateKey, nil)), p)
 }
 
 func NewPair(p *big.Int, g int64) (private, public *big.Int) {
-
+	pr := PrivateKey(p)
+	pu := PublicKey(private, p, g)
+	return pr, pu
 }
 
 func SecretKey(private, public, p *big.Int) *big.Int {
