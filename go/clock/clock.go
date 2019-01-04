@@ -2,22 +2,25 @@ package clock
 
 import "fmt"
 
+// Clock respresents a real world clock, but misses seconds
 type Clock struct {
 	hour   int
 	minute int
 }
 
+// New initialises a new clock with the given time
 func New(hour int, minute int) Clock {
 	clockHelper := Clock{hour, minute}
 	return clockHelper.checkBounds()
 }
 
+// Add adds the given amount of minutes to the clock
 func (clock Clock) Add(minute int) Clock {
 	clock.minute += minute
-	//	fmt.Printf("Clock minutes before bound check %d\n", clock.minute)
 	return clock.checkBounds()
 }
 
+// Subtract subtracts the given amount of minutes from the clock
 func (clock Clock) Subtract(minute int) Clock {
 	// invert minutes
 	minute = minute * -1
