@@ -24,6 +24,7 @@ func Build(records []Record) (*Node, error) {
 		return slice[i].ID < slice[j].ID
 	})
 
+	// test for non consecutive ids
 	for i, x := range slice {
 		fmt.Printf("id: %d\nparent: %d\n", x.ID, x.Parent)
 		if len(slice) > 1 {
@@ -43,7 +44,6 @@ func Build(records []Record) (*Node, error) {
 	// create *Node
 	var node *Node
 	n := make([]*Node, 0)
-	fmt.Println(n)
 
 	for len(slice) > 0 {
 		r := slice[0]
@@ -58,6 +58,9 @@ func Build(records []Record) (*Node, error) {
 		node = &Node{r.ID, n}
 	}
 
-	fmt.Print(node)
+	if len(records) == 1 {
+		node = &Node{0, nil}
+	}
+
 	return node, nil
 }
