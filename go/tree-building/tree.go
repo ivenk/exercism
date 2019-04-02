@@ -1,9 +1,8 @@
 package tree
 
 import (
-	"errors"
-	"fmt"
-	"sort"
+//	"errors"
+//	"fmt"
 )
 
 type Record struct {
@@ -17,50 +16,52 @@ type Node struct {
 }
 
 func Build(records []Record) (*Node, error) {
+	if len(records) == 0 {
+		return nil, nil
+	}
+	if len(records) == 1 {
+		return &Node{0, nil}, nil
+	}
 	slice := records[:]
 
-	// sorts the records by there id
-	sort.Slice(slice, func(i, j int) bool {
-		return slice[i].ID < slice[j].ID
-	})
+	// need to test for failures
 
-	// test for non consecutive ids
+	return buildNode(0, slice), nil
+}
+
+// builds a node with the given id
+// browses the slice for children nods
+// slice has to be passed by value !
+func buildNode(id int, slice []Record) *Node {
+	var childRecords []Record
+	var children []*Node
+
+	var ownIndex int
+	// assemble children
 	for i, x := range slice {
-		fmt.Printf("id: %d\nparent: %d\n", x.ID, x.Parent)
-		if len(slice) > 1 {
-			if (slice[i].ID != slice[i].ID) || (slice[i].ID != slice[i].ID+1) {
-				return nil, errors.New("fail2")
-			}
+		if x.Parent == id {
+			cutSlice := remove(slice, i)
+			childRecords = append(childRecords, x)
+		}
+		// find own position
+		if x.ID == id {
+			ownIndex = i
 		}
 	}
+	cutSlice = remove(cutSlice, ownIndex)
 
-	if len(slice) > 0 {
-		// root should have itself as a parent
-		if slice[0].Parent != slice[0].ID {
-			return nil, errors.New("fail1")
-		}
+	//  build rest ...
+	for _, record : = childRecords {
+		child := buildNode(record.ID, cutSlice)
+		children = append(children, child)
 	}
+	
+	return &Node{id, children}
+}
 
-	// create *Node
-	var node *Node
-	n := make([]*Node, 0)
-
-	for len(slice) > 0 {
-		r := slice[0]
-		slice = slice[1:] // remove first element
-
-		for _, v := range slice {
-			// look for records with matching parent id; exlude root parent != ownID
-			if v.Parent == r.ID && v.Parent != v.ID {
-				n = append(n, &Node{v.Parent, []*Node{}})
-			}
-		}
-		node = &Node{r.ID, n}
-	}
-
-	if len(records) == 1 {
-		node = &Node{0, nil}
-	}
-
-	return node, nil
+// Removes element of slice
+// taken from ...
+func remove(slice []Record, index int) []Record {
+	slice[index] = slice[len(slice)-1]
+	return slice[:len(slice)-1]
 }
