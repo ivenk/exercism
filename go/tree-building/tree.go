@@ -16,32 +16,15 @@ type Node struct {
 	Children []*Node
 }
 
-// special type sorting
-type ByID []Record
-
-func (rec ByID) Len() int {
-	return len(rec)
-}
-
-func (rec ByID) Swap(i, j int) {
-	rec[i], rec[j] = rec[j], rec[i]
-}
-
-func (rec ByID) Less(i, j int) bool {
-	return rec[i].ID < rec[j].ID
-}
-
 func Build(records []Record) (*Node, error) {
 	// error checks
 	if len(records) == 0 {
 		return nil, nil
 	}
-	if len(records) == 1 {
-		return &Node{0, nil}, nil
-	}
+
+	fmt.Println("Records:")
 	workingParent := false
 	for _, x := range records {
-		fmt.Println("Records:")
 		fmt.Print("      ")
 		fmt.Println(x)
 		if (x.ID == x.Parent) && (x.ID == 0) { // node with id 0 and id = parentID
@@ -60,10 +43,7 @@ func Build(records []Record) (*Node, error) {
 // browses the slice for children nods
 // slice has to be passed by value !
 func buildNode(id int, slice []Record) *Node {
-	fmt.Printf("Records given for %d\n", id)
-	fmt.Println(slice)
-
-	var childRecords []Record
+	var childIDs []int
 	var children []*Node
 
 	var cutSlice []Record
@@ -72,7 +52,9 @@ func buildNode(id int, slice []Record) *Node {
 	for i, x := range slice {
 		if x.Parent == id {
 			if x.ID != id { // only add if not self
-				childRecords = append(childRecords, x)
+				if !contains(childIDs, x.ID) { // this check should be optional ...
+					childIDs = append(childIDs, x.ID)
+				}
 			}
 		}
 		// find own position
@@ -86,14 +68,14 @@ func buildNode(id int, slice []Record) *Node {
 	}
 
 	fmt.Printf("childRecords for %d\n", id)
-	fmt.Println(childRecords)
+	fmt.Println(childIDs)
 
 	// sorts the records by there id
-	sort.Sort(ByID(childRecords))
+	sort.Ints(childIDs)
 
 	//  build rest ...
-	for _, record := range childRecords {
-		child := buildNode(record.ID, cutSlice)
+	for _, record := range childIDs {
+		child := buildNode(record, cutSlice)
 		children = append(children, child)
 	}
 
@@ -105,4 +87,15 @@ func buildNode(id int, slice []Record) *Node {
 func remove(slice []Record, index int) []Record {
 	slice[index] = slice[len(slice)-1]
 	return slice[:len(slice)-1]
+}
+
+// checks wether the int value is found within the given slice
+func contains(slice []int, value int) bool {
+	for _, x := range slice {
+		if x == value {
+			return true
+		}
+	}
+
+	return false
 }
