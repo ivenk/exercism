@@ -60,6 +60,9 @@ func Build(records []Record) (*Node, error) {
 // browses the slice for children nods
 // slice has to be passed by value !
 func buildNode(id int, slice []Record) *Node {
+	fmt.Printf("Records given for %d\n", id)
+	fmt.Println(slice)
+
 	var childRecords []Record
 	var children []*Node
 
@@ -81,6 +84,9 @@ func buildNode(id int, slice []Record) *Node {
 	if ownIndex > -1 {
 		cutSlice = remove(slice, ownIndex)
 	}
+
+	fmt.Printf("childRecords for %d\n", id)
+	fmt.Println(childRecords)
 
 	// sorts the records by there id
 	sort.Sort(ByID(childRecords))
