@@ -22,6 +22,36 @@ func Build(records []Record) (*Node, error) {
 		return nil, nil
 	}
 
+	lastElements := 0
+	// check for duplicates and non continuous
+	for _, i := range records {
+		occurence := 0
+		hasSuccessor := false
+
+		for _, j := range records {
+			if i.ID == j.ID {
+				occurence += 1
+			}
+			if i.ID == (j.ID + 1) {
+				hasSuccessor = true
+			}
+		}
+
+		if occurence > 1 {
+			return nil, errors.New("fail")
+		}
+
+		// if it does not have a direct successor it must be the last element
+		if !hasSuccessor {
+			lastElements += 1
+		}
+	}
+
+	// if there are more then one elments without successors we have non continiuous items
+	if lastElements > 1 {
+		return nil, errors.New("fail")
+	}
+
 	fmt.Println("Records:")
 	workingParent := false
 	for _, x := range records {
@@ -52,7 +82,7 @@ func buildNode(id int, slice []Record) *Node {
 	for i, x := range slice {
 		if x.Parent == id {
 			if x.ID != id { // only add if not self
-				if !contains(childIDs, x.ID) { // this check should be optional ...
+				if !contains(childIDs, x.ID) { // this check should not be requiered...
 					childIDs = append(childIDs, x.ID)
 				}
 			}
