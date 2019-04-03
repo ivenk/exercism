@@ -60,13 +60,25 @@ func Build(records []Record) (*Node, error) {
 		if (x.ID == x.Parent) && (x.ID == 0) { // node with id 0 and id = parentID
 			workingParent = true
 		}
+		if (x.ID == x.Parent) && (x.ID != 0) {
+			return nil, errors.New("fail")
+		}
 	}
 	if !workingParent {
 		return nil, errors.New("Fail !")
 	}
 
 	slice := records[:]
-	return buildNode(0, slice), nil
+	tree := buildNode(0, slice)
+
+	// count nodes created; finds cycling
+	count := countTotalChildNodes(tree) + 1
+	if count < len(records) {
+		return nil, errors.New("fail")
+	}
+
+	return tree, nil
+
 }
 
 // builds a node with the given id
@@ -126,6 +138,15 @@ func contains(slice []int, value int) bool {
 			return true
 		}
 	}
-
 	return false
+}
+
+// this counts all the nodes below the current one. Returns the total number of nodes - 1
+func countTotalChildNodes(tree *Node) int {
+	count := len(tree.Children)
+	for _, x := range tree.Children {
+		count += countTotalChildNodes(x)
+	}
+
+	return count
 }
