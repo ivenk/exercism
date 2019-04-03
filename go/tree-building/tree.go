@@ -2,7 +2,6 @@ package tree
 
 import (
 	"errors"
-	"fmt"
 	"sort"
 )
 
@@ -20,6 +19,13 @@ func Build(records []Record) (*Node, error) {
 	// error checks
 	if len(records) == 0 {
 		return nil, nil
+	}
+
+	// test if all child nodes have higher ids then parents
+	for _, y := range records {
+		if y.ID < y.Parent {
+			return nil, errors.New("fail")
+		}
 	}
 
 	lastElements := 0
@@ -52,11 +58,8 @@ func Build(records []Record) (*Node, error) {
 		return nil, errors.New("fail")
 	}
 
-	fmt.Println("Records:")
 	workingParent := false
 	for _, x := range records {
-		fmt.Print("      ")
-		fmt.Println(x)
 		if (x.ID == x.Parent) && (x.ID == 0) { // node with id 0 and id = parentID
 			workingParent = true
 		}
@@ -83,7 +86,6 @@ func Build(records []Record) (*Node, error) {
 
 // builds a node with the given id
 // browses the slice for children nods
-// slice has to be passed by value !
 func buildNode(id int, slice []Record) *Node {
 	var childIDs []int
 	var children []*Node
@@ -108,9 +110,6 @@ func buildNode(id int, slice []Record) *Node {
 	if ownIndex > -1 {
 		cutSlice = remove(slice, ownIndex)
 	}
-
-	fmt.Printf("childRecords for %d\n", id)
-	fmt.Println(childIDs)
 
 	// sorts the records by there id
 	sort.Ints(childIDs)
