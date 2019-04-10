@@ -47,6 +47,12 @@ class HighScoreTest(unittest.TestCase):
         expected = [40]
         self.assertEqual(HighScores(scores).personal_top_three(), expected)
 
+    def test_personal_top_three_does_not_break_latest(self):
+        scores = [20, 10, 30]
+        expected = 30
+        high_scores = HighScores(scores)
+        high_scores.personal_top_three()
+        self.assertEqual(high_scores.latest(), expected)
 
 if __name__ == "__main__":
     unittest.main()
