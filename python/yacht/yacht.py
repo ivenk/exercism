@@ -47,20 +47,14 @@ def score(dice, category):
 
 # returns the points the dice scored in the yacht category
 def __yacht(dice):
-       # check if all equal
-        f = dice[0]
-        for y in dice:
-           if f != y: 
-               return 0 # sth is not equal, no points
-        return 50 # everything matches, 50 points for you
-
+    if dice.count(dice[0]) == 5:
+        return 50
+    else:
+        return 0
+    
 # returns the points scored in the number categorie identified by the number given
 def __number(dice, number):
-    i = 0
-    for x in dice :
-        if x == number:
-            i += 1 
-    return i * number
+    return dice.count(number) * number
 
 # returns the points scored in the full house categorie
 def __full_house(dice):
@@ -98,20 +92,18 @@ def __four_of_a_kind(dice):
     # if it doesnt there cannot be four of a kind in a list of len 5
     if (dice.count(dice[1]) >= 4):
         return dice[1] * 4
-        
+      
     return 0
 
 
 def __little_straight(dice):
-    dice.sort()
     # always wanted to use list comprehension
-    if dice == [x for x in range(1, 6)]:
+    if sorted(dice) == [x for x in range(1, 6)]:
         return 30
     return 0 
 
 def __big_straight(dice):
-    dice.sort()
-    if dice == [x for x in range(2, 7)]:
+    if sorted(dice) == [x for x in range(2, 7)]:
         return 30
     return 0
 
