@@ -9,5 +9,6 @@ class Matrix(object):
         return self.matrix_list[index-1]
         
     def column(self, index):
-        return
+        # should always have the correct order since lists are ordered
+        return [z[index-1] for z in self.matrix_list]
         
