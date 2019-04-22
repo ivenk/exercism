@@ -4,7 +4,8 @@ class Matrix(object):
         self.matrix_list = [[int(y) for y in x.split(" ")] for x in matrix_string.split("\n")]
         
     def row(self, index):
-        return self.matrix_list[index-1]
+        # copy : return by value instead of reference
+        return self.matrix_list[index-1].copy()
         
     def column(self, index):
         # should always have the correct order since lists are ordered
