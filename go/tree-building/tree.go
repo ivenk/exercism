@@ -8,16 +8,19 @@ import (
 	"sort"
 )
 
+// Record describes a single record entry
 type Record struct {
 	ID     int
 	Parent int
 }
 
+// Node describes a node of the tree to be constructed
 type Node struct {
 	ID       int
 	Children []*Node
 }
 
+// Build given a set of records it builds a tree structure
 func Build(records []Record) (*Node, error) {
 	if len(records) == 0 {
 		return nil, nil
