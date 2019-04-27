@@ -6,15 +6,15 @@ import (
 	"math/rand"
 )
 
-// Want to hide the name from unchecked access
 // Robot struct representing a robot with a unique name
+// Want to hide the name from unchecked access
 type Robot struct {
 	name string
 }
 
 // global nameslice
 var nameList []string
-var maxRobots int = 26 * 26 * 10 * 10 * 10
+var maxRobots = 26 * 26 * 10 * 10 * 10
 
 // Name returns the unique robot name, if the robot has no name yet a new one will be created
 func (r *Robot) Name() (string, error) {
@@ -24,7 +24,7 @@ func (r *Robot) Name() (string, error) {
 	}
 
 	if len(nameList) >= maxRobots {
-		return "", errors.New("Maximum number of available robots reached !")
+		return "", errors.New("Maximum number of available robots reached")
 	}
 
 	name := generateName()
@@ -32,6 +32,7 @@ func (r *Robot) Name() (string, error) {
 	return name, nil
 }
 
+// Reset resets the current robot name
 func (r *Robot) Reset() { r.name = "" }
 
 // generates a random name for the robot which is not yet in the namelist. Adds it to the list after generation
