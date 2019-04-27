@@ -1,5 +1,11 @@
 package robotname
 
+import (
+	"errors"
+	"fmt"
+	"math/rand"
+)
+
 // Want to hide the name from unchecked access
 // Robot struct representing a robot with a unique name
 type Robot struct {
@@ -8,34 +14,44 @@ type Robot struct {
 
 // global nameslice
 var nameList []string
+var maxRobots int = 26 * 26 * 10 * 10 * 10
 
 // Name returns the unique robot name, if the robot has no name yet a new one will be created
-func (r Robot) Name() (string, error) {
+func (r *Robot) Name() (string, error) {
+	//	fmt.Println(nameList)
 	if r.name != "" {
-		return name, nil
+		return r.name, nil
+	}
+
+	if len(nameList) >= maxRobots {
+		return "", errors.New("Maximum number of available robots reached !")
 	}
 
 	name := generateName()
 	r.name = name
-	return name
+	return name, nil
 }
+
+func (r *Robot) Reset() { r.name = "" }
 
 // generates a random name for the robot which is not yet in the namelist. Adds it to the list after generation
 func generateName() string {
 	newName := ""
-	for contains(nameList, newName) || (newName == "") {
-		newName = fmt.Sprintf("%s%s%03d", ('A' + rand.Intn(24)), ('A' + rand.Intn(24)), rand.Intn(999))
+	for {
+		newName = fmt.Sprintf("%s%s%03d", string(('A' + rand.Intn(26))), string(('A' + rand.Intn(26))), rand.Intn(1000))
+		if _, x := contains(nameList, newName); !x {
+			nameList = append(nameList, newName)
+			return newName
+		}
 	}
-	nameList = append(nameList, newName)
-	return newName
 }
 
 // contains checks wether the slice of strings contains the given key
-func contains(slice []string, key string) bool {
-	for _, x := range slice {
+func contains(slice []string, key string) (int, bool) {
+	for i, x := range slice {
 		if x == key {
-			return true
+			return i, true
 		}
 	}
-	return false
+	return -1, false
 }
