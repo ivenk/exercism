@@ -2,7 +2,7 @@ def is_isogram(string):
     li = []
     for x in [c for c in string if c.isalpha()]:
         if x in li:
-            return false
+            return False
         li.append(x)
 
-    return true
+    return True
