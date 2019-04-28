@@ -1,15 +1,9 @@
-def raindrops(number):
-    # +1 due to range exluding the max number; at the end we need to append the number itself
-    factors = [x for x in range(1, (int(number/2) + 1)) if number % x == 0]
-    factors.append(number)
-    res = ""
-    if 3 in factors:
-        res += "Pling"
-    if 5 in factors:
-        res += "Plang"
-    if 7 in factors:
-        res += "Plong"
+# compared to the last solution we only check for the keys we are interested in : 3, 5, 7
+# this makes things way easier.
 
+def raindrops(number):
+    my_map = {3: 'Pling', 5: 'Plang', 7: 'Plong'}
+    res = ''.join([my_map[f] for f in [x for x in my_map.keys() if number % x == 0]])
     if res == "":
         return str(number)
         
