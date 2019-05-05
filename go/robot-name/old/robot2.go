@@ -13,11 +13,12 @@ type Robot struct {
 }
 
 // global nameslice
-var nameList = make(map[string]bool)
+var nameList []string
 var maxRobots = 26 * 26 * 10 * 10 * 10
 
 // Name returns the unique robot name, if the robot has no name yet a new one will be created
 func (r *Robot) Name() (string, error) {
+	//	fmt.Println(nameList)
 	if r.name != "" {
 		return r.name, nil
 	}
@@ -39,9 +40,19 @@ func generateName() string {
 	newName := ""
 	for {
 		newName = fmt.Sprintf("%s%s%03d", string(('A' + rand.Intn(26))), string(('A' + rand.Intn(26))), rand.Intn(1000))
-		if !nameList[newName] { // if name not in map
-			nameList[newName] = true
+		if _, x := contains(nameList, newName); !x {
+			nameList = append(nameList, newName)
 			return newName
 		}
 	}
+}
+
+// contains checks wether the slice of strings contains the given key
+func contains(slice []string, key string) (int, bool) {
+	for i, x := range slice {
+		if x == key {
+			return i, true
+		}
+	}
+	return -1, false
 }
