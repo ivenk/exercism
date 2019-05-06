@@ -1,5 +1,5 @@
 song_dic = {
-    1:("first", "a Partridge in a Pear Tree"),
+    1:("first", "and a Partridge in a Pear Tree."),
     2:("second", "two Turtle Doves"),
     3:("third", "three French Hens"),
     4:("fourth", "four Calling Birds"),
@@ -19,12 +19,10 @@ def recite(start_verse, end_verse):
     lines = []
     while start_verse <= end_verse:
         end_list = [(song_dic[x])[1] for x in range(start_verse, 0, -1)]
-        if len(end_list) > 1 :
-            end_list[-1] = "and {}".format(end_list[-1]) # last item needs and and .
+        if len(end_list) == 1 :
+            end_list[-1] = end_list[-1].replace('and ', '')
             
-        end_list[-1] = "{}.".format(end_list[-1]) # last item needs .
-        endings = ', '.join(end_list)
-        line = "{} {}".format(default_line.format(song_dic[start_verse][0]), endings)
+        line = "{} {}".format(default_line.format(song_dic[start_verse][0]), ', '.join(end_list))
         lines.append(line)
         start_verse += 1
         
