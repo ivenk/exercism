@@ -13,7 +13,7 @@ type Robot struct {
 }
 
 // global nameslice
-var nameList = make(map[string]bool)
+var used = make(map[string]bool)
 var maxRobots = 26 * 26 * 10 * 10 * 10
 
 // Name returns the unique robot name, if the robot has no name yet a new one will be created
@@ -22,26 +22,27 @@ func (r *Robot) Name() (string, error) {
 		return r.name, nil
 	}
 
-	if len(nameList) >= maxRobots {
+	if len(used) >= maxRobots {
 		return "", errors.New("Maximum number of available robots reached")
 	}
 
-	name := generateName()
-	r.name = name
-	return name, nil
+	r.name = generateUniqueName()
+	return r.name, nil
 }
 
 // Reset resets the current robot name
 func (r *Robot) Reset() { r.name = "" }
 
 // generates a random name for the robot which is not yet in the namelist. Adds it to the list after generation
-func generateName() string {
-	newName := ""
-	for {
-		newName = fmt.Sprintf("%s%s%03d", string(('A' + rand.Intn(26))), string(('A' + rand.Intn(26))), rand.Intn(1000))
-		if !nameList[newName] { // if name not in map
-			nameList[newName] = true
-			return newName
-		}
+func generateUniqueName() string {
+	newName := generateRandomName()
+	for used[newName] {
+		newName = generateRandomName()
 	}
+	used[newName] = true
+	return newName
+}
+
+func generateRandomName() string {
+	return fmt.Sprintf("%s%s%03d", string(('A' + rand.Intn(26))), string(('A' + rand.Intn(26))), rand.Intn(1000))
 }
