@@ -25,9 +25,8 @@ func Detect(base string, poss []string) []string {
 // buildMapFromWord returns a map matching each rune to the number of occurences in the given word.
 func buildMapFromWord(word string) map[rune]int {
 	m := make(map[rune]int)
-
 	for _, l := range word {
-		m[l] += 1
+		m[l]++
 	}
 	return m
 }
