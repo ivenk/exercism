@@ -8,12 +8,10 @@ import (
 // Detect returns a subset of strings from the given possibilities which are actually anagrams of the given base
 func Detect(base string, poss []string) []string {
 	result := make([]string, 0)
-	lbase := strings.ToLower(base)
-
-	bm := buildMapFromWord(lbase)
+	bm := buildMapFromWord(strings.ToLower(base))
 	for _, p := range poss {
 		lp := strings.ToLower(p)
-		if lp == lbase { // the word itself is no anagram
+		if lp == lbase || len(p) != len(base) { // the word itself is no anagram
 			continue
 		}
 		pm := buildMapFromWord(lp)
