@@ -4,7 +4,5 @@
 def raindrops(number):
     my_map = {3: 'Pling', 5: 'Plang', 7: 'Plong'}
     res = ''.join([my_map[f] for f in [x for x in my_map.keys() if number % x == 0]])
-    if res == "":
-        return str(number)
-        
-    return res
+    return res or str(number)
+
