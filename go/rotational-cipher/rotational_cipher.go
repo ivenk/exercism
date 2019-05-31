@@ -1,3 +1,5 @@
+// got inspired by the great solution of krhubert
+
 package rotationalcipher
 
 import (
@@ -6,30 +8,18 @@ import (
 )
 
 func RotationalCipher(plain string, key int) string {
-	var buf strings.Builder
-	for _, p := range plain {
-		if unicode.IsLetter(p) {
-			p = applyKey(p, key)
-		}
-		buf.WriteRune(p)
-	}
-	return buf.String()
+	return strings.Map(applyKey(key), plain)
 }
 
-func applyKey(r rune, key int) rune {
-	mod := 0
-	add := 0
-	if unicode.IsUpper(r) {
-		mod = 'Z' + 1
-		add = 'A'
-	} else { //has to be lower
-		mod = 'z' + 1
-		add = 'a'
+func applyKey(key int) func(rune) rune { // that syntax does not look good in go
+	return func(r rune) rune {
+		switch {
+		case unicode.IsUpper(r):
+			return rune(((int(r) + key - 'A') % 26) + 'A')
+		case unicode.IsLower(r):
+			return rune(((int(r) + key - 'a') % 26) + 'a')
+		default:
+			return r
+		}
 	}
-
-	res := (int(r) + key)
-	if res >= mod {
-		res = (res % mod) + add
-	}
-	return rune(res)
 }
