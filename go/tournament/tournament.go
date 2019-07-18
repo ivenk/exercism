@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 )
+
 // input looks like :
 // ---
 // Allegoric Alaskians;Blithering Badgers;win
@@ -31,29 +32,20 @@ func Tally(io.Reader, io.Writer) error {
 			}
 		}
 
+		// add points to map
 		switch w[2] {
 		case "win":
-			m[w[0]] = [2] int {m[w[0]][0] + 1, m[w[0]][1]} // add one to wins for team 1
-			m[w[1]] = [2] int {m[w[1]][0], m[w[1]][1] + 1} // second team gets a loss
+			m[w[0]] = [2]int{m[w[0]][0] + 1, m[w[0]][1]} // add one to wins for team 1
+			m[w[1]] = [2]int{m[w[1]][0], m[w[1]][1] + 1} // second team gets a loss
 		case "draw": // do nothing
 			break
 		case "loss":
-			m[w[0]] = [2] int {m[w[0]][0], m[w[0]][1] + 1} // add one to loss for team 1
-			m[w[1]] = [2] int {m[w[1]][0] + 1, m[w[1]][1]} // second team gets a win
+			m[w[0]] = [2]int{m[w[0]][0], m[w[0]][1] + 1} // add one to loss for team 1
+			m[w[1]] = [2]int{m[w[1]][0] + 1, m[w[1]][1]} // second team gets a win
 		default:
-			return errors.New("game result could not be parsed for " + w[0]+ " : " + w[1])
-		}
-
-		if v, b := m[w[0]]; b { // if team exits
-
-			m[w[0]] = [...]int{v[0] + strconv.Atoi(w[1]), v[1] + strconv.Atoi(w[2])}
-		} else {
-			// add entry with the described format
-			m[w[0]] = [...]int{w[1], w[2]}
+			return errors.New("game result could not be parsed for " + w[0] + " : " + w[1])
 		}
 	}
 
 	return ""
 }
-
-func
