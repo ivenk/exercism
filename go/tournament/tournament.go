@@ -93,7 +93,7 @@ func Tally(in io.Reader, out io.Writer) error {
 			if vtotal > btotal {
 				bestIndex = k
 			} else if vtotal == btotal {
-				if strings.Compare(v.name, m[bestIndex].name) < 0 {
+				if v.name < m[bestIndex].name {
 					bestIndex = k
 				}
 			}
