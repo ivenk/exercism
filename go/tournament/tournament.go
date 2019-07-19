@@ -87,15 +87,16 @@ func Tally(in io.Reader, out io.Writer) error {
 				continue
 			}
 
-			if v.wins > m[bestIndex].wins {
+			vtotal := 3*v.wins + v.draws
+			btotal := 3*m[bestIndex].wins + m[bestIndex].draws
+			if vtotal > btotal {
 				bestIndex = k
-			} else if v.wins == m[bestIndex].wins {
-				if v.losses < m[bestIndex].losses {
+			} else if vtotal == btotal {
+				if strings.Compare(v.name, m[bestIndex].name) < 0 {
 					bestIndex = k
 				}
 			}
 		}
-
 		bk := m[bestIndex]
 
 		// pads each team name to 25 characters, added after the name (-)
