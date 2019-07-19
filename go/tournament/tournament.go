@@ -31,7 +31,7 @@ func Tally(in io.Reader, out io.Writer) error {
 	buffer := make([]byte, BufferSize)
 	n, e := in.Read(buffer)
 	if e != nil {
-		return errors.New("Could not read input")
+		return errors.New("could not read input")
 	}
 	entries := string(buffer[:n])
 
@@ -44,7 +44,7 @@ func Tally(in io.Reader, out io.Writer) error {
 
 		w := strings.Split(l, ";")
 		if len(w) != 3 {
-			return errors.New("Input data is formated incorrectly")
+			return errors.New("input data is formated incorrectly")
 		}
 
 		// make sure both teams are already in our map
@@ -72,9 +72,10 @@ func Tally(in io.Reader, out io.Writer) error {
 
 	// build output
 	//	separatorIndex := strings.Index(TableHeader, "|")
-	out.Write([]byte(TableHeader))
-	out.Write([]byte("\n"))
-
+	_, y := out.Write([]byte(TableHeader + "\n"))
+	if y != nil {
+		return errors.New("could not write tabelheader")
+	}
 	numberOfTeams := len(m)
 
 	for i := 0; i < numberOfTeams; i++ {
@@ -101,7 +102,11 @@ func Tally(in io.Reader, out io.Writer) error {
 
 		// pads each team name to 25 characters, added after the name (-)
 		totalPoints := 3*bk.wins + bk.draws
-		out.Write([]byte(fmt.Sprintf("%-31v|  %v |  %v |  %v |  %v |  %v\n", bk.name, (bk.wins + bk.losses + bk.draws), bk.wins, bk.draws, bk.losses, totalPoints)))
+		_, e := out.Write([]byte(fmt.Sprintf("%-31v|  %v |  %v |  %v |  %v |  %v\n", bk.name, (bk.wins + bk.losses + bk.draws), bk.wins, bk.draws, bk.losses, totalPoints)))
+		if e != nil {
+			return errors.New("could not write line for : " + bk.name)
+		}
+
 		delete(m, bestIndex)
 	}
 
