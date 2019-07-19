@@ -19,10 +19,9 @@ type entry struct {
 }
 
 // input looks like :
-// ---
 // Allegoric Alaskians;Blithering Badgers;win
 // Devastating Donkeys;Courageous Californians;draw
-// ---
+//
 // gets converted to:
 // internal map structure: [name_of_the_team] = [wins, losses]
 // Tally converts the given input string into a table and returns it
