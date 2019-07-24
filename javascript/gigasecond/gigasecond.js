@@ -1,5 +1,3 @@
 export const gigasecond = (date) => {
-    return new Date(date.getTime() + GIGASECOND*1000);
+    return new Date(date.getTime() + 10e11);
 };
-
-const GIGASECOND = 1000000000
