@@ -1,41 +1,113 @@
 package tournament
 
 import (
+	"errors"
 	"fmt"
 	"io"
-	"strconv"
 	"strings"
 )
 
-const bufferSize int = 1000
+const BufferSize = 1000
 
-// map structure: [name_of_the_team] = [wins, losses]
+const TableHeader = "Team                           | MP |  W |  D |  L |  P"
 
+type entry struct {
+	name   string
+	wins   int
+	losses int
+	draws  int
+}
+
+// input looks like :
+// Allegoric Alaskians;Blithering Badgers;win
+// Devastating Donkeys;Courageous Californians;draw
+//
+// gets converted to:
+// internal map structure: [name_of_the_team] = [wins, losses]
 // Tally converts the given input string into a table and returns it
-func Tally(reader io.Reader, buffer io.Writer) error {
-	m := make(map[string][2]int)
-	resultbytes := make([]byte, bufferSize) // dont know the size; but we want to read it all
+func Tally(in io.Reader, out io.Writer) error {
+	m := make(map[string]entry)
 
-	for hasMore := true; hasMore; {
-		i, _ := reader.Read(resultbytes) // this is really redundant but i cant think of a bette way ...
-		if i > 0 {
+	buffer := make([]byte, BufferSize)
+	n, e := in.Read(buffer)
+	if e != nil {
+		return errors.New("could not read input")
+	}
+	entries := string(buffer[:n])
 
+	// iterate over all lines
+	for _, l := range strings.Split(entries, "\n") {
+		// there are some empty lines in the input
+		if l == "" || string(l[0]) == "#" {
+			continue
+		}
+
+		w := strings.Split(l, ";")
+		if len(w) != 3 {
+			return errors.New("input data is formated incorrectly")
+		}
+
+		// make sure both teams are already in our map
+		for i := 0; i < 2; i++ {
+			if _, b := m[w[0]]; !b { // if team does not yet exist
+				m[w[0]] = entry{w[0], 0, 0, 0} // create entry
+			}
+		}
+
+		// add points to map
+		switch w[2] {
+		case "win":
+			m[w[0]] = entry{w[0], m[w[0]].wins + 1, m[w[0]].losses, m[w[0]].draws} // add one to wins for team 1
+			m[w[1]] = entry{w[1], m[w[1]].wins, m[w[1]].losses + 1, m[w[1]].draws} // second team gets a loss
+		case "loss":
+			m[w[0]] = entry{w[0], m[w[0]].wins, m[w[0]].losses + 1, m[w[0]].draws} // add one to loss for team 1
+			m[w[1]] = entry{w[1], m[w[1]].wins + 1, m[w[1]].losses, m[w[1]].draws} // second team gets a win
+		case "draw": // do nothing
+			m[w[0]] = entry{w[0], m[w[0]].wins, m[w[0]].losses, m[w[0]].draws + 1} // add one to loss for team 1
+			m[w[1]] = entry{w[1], m[w[1]].wins, m[w[1]].losses, m[w[1]].draws + 1} // second team gets a win
+		default:
+			return errors.New("game result could not be parsed for " + w[0] + " : " + w[1])
 		}
 	}
 
-	fmt.Printf("%d\n", i)
-	results := string(resultbytes)
+	// build output
+	//	separatorIndex := strings.Index(TableHeader, "|")
+	_, y := out.Write([]byte(TableHeader + "\n"))
+	if y != nil {
+		return errors.New("could not write tabelheader")
+	}
+	numberOfTeams := len(m)
 
-	for _, l := range strings.Split(results, "\n") { // split on new lines
-		w := strings.Split(l, ";")
-		v1, _ := strconv.Atoi(w[1])
-		v2, _ := strconv.Atoi(w[2])
-		if v, b := m[w[0]]; b {
-			m[w[0]] = [...]int{v[0] + v1, v[1] + v2}
-		} else {
-			// add entry with the described format
-			m[w[0]] = [...]int{v1, v2}
+	for i := 0; i < numberOfTeams; i++ {
+		bestIndex := ""
+		// search highest scoring team
+		for k, v := range m {
+			// first iteration
+			if bestIndex == "" {
+				bestIndex = k
+				continue
+			}
+
+			vtotal := 3*v.wins + v.draws
+			btotal := 3*m[bestIndex].wins + m[bestIndex].draws
+			if vtotal > btotal {
+				bestIndex = k
+			} else if vtotal == btotal {
+				if v.name < m[bestIndex].name {
+					bestIndex = k
+				}
+			}
 		}
+		bk := m[bestIndex]
+
+		// pads each team name to 25 characters, added after the name (-)
+		totalPoints := 3*bk.wins + bk.draws
+		_, e := out.Write([]byte(fmt.Sprintf("%-31v|  %v |  %v |  %v |  %v |  %v\n", bk.name, (bk.wins + bk.losses + bk.draws), bk.wins, bk.draws, bk.losses, totalPoints)))
+		if e != nil {
+			return errors.New("could not write line for : " + bk.name)
+		}
+
+		delete(m, bestIndex)
 	}
 	return nil
 }
