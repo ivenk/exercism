@@ -1,12 +1,13 @@
 class ArmstrongNumbers {
 	boolean isArmstrongNumber(int numberToCheck) {
-		int len = String.valueOf(numberToCheck).length();
-		int number = numberToCheck;
-		int result = 0;
+        String numbers = String.valueOf(numberToCheck);
+        int len = numbers.length();
 
-		for(; number > 0; number = number/10) {
-		    result += Math.pow((number % 10), len);
-        }
-		return (result == numberToCheck);
+        int finalValue = numbers.chars()
+                .map(Character::getNumericValue)
+                .map(n -> (int) Math.pow(n, len))
+                .sum();
+
+        return finalValue == numberToCheck;
 	}
 }
