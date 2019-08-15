@@ -1,10 +1,11 @@
+import java.util.Arrays;
+
+/**
+ * Great solution, stolen from Wismin-Effendi
+ */
 class ResistorColor {
     int colorCode(String color) {
-        for(int i = 0; i < colors().length; i++)
-            if (color == colors()[i]) {
-                return i;
-            }
-        return -1;
+        return Arrays.asList(colors()).indexOf(color);
     }
 
     String[] colors() {
