@@ -1,3 +1,4 @@
+import kotlin.math.floor
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
@@ -7,27 +8,19 @@ class DndCharacter {
     val dexterity: Int = ability()
     val constitution: Int = ability()
     val intelligence: Int = ability()
-    val wisdom: Int = TODO("Initialize value to complete the task")
-    val charisma: Int = TODO("Initialize value to complete the task")
-    val hitpoints: Int = TODO("Initialize value to complete the task")
+    val wisdom: Int = ability()
+    val charisma: Int = ability()
+    val hitpoints: Int = 10 + modifier(constitution)
 
     companion object {
 
         fun ability(): Int {
-            val rolles = mutableListOf<Int>()
-            repeat(4) {
-                rolles.add(rollDice())
-            }
-            val sum = rolles.sorted().dropLast(1).sum()
-            return sum
+            return List(4) { Random.nextInt(1, 6) }.sorted().drop(1).sum()
         }
 
         fun modifier(score: Int): Int {
-            val div = score.minus(10).div(2)
-            return div
+            return floor(score.minus(10).div(2.0)).toInt()
         }
-
-        private fun rollDice() : Int = Random.nextInt(5);
     }
 
 }
