@@ -9,7 +9,7 @@ class CustomSet(content: List<Int>) {
     }
 
     fun isSubset(other: CustomSet): Boolean {
-        return content.containsAll(other.content)
+        return other.content.containsAll(content)
     }
 
     fun isDisjoint(other: CustomSet): Boolean {
@@ -29,10 +29,7 @@ class CustomSet(content: List<Int>) {
     }
 
     override fun equals(other: Any?): Boolean {
-        println(content.toList())
-        if (other is CustomSet) println(other.content.toList())
-
-        return if (other is CustomSet) other.content == this.content else false
+        if (other is CustomSet) return other.content.containsAll(content) && content.containsAll(other.content) else return false
     }
 
     operator fun plus(other: CustomSet): CustomSet {
