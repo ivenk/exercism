@@ -29,18 +29,14 @@ class CustomSet(content: List<Int>) {
     }
 
     override fun equals(other: Any?): Boolean {
-        if (other is CustomSet) return other.content.containsAll(content) && content.containsAll(other.content) else return false
+        return if (other is CustomSet) other.content.containsAll(content) && content.containsAll(other.content) else false
     }
 
     operator fun plus(other: CustomSet): CustomSet {
-        val newList = content.toMutableList()
-        newList.addAll(other.content)
-        return CustomSet().apply { this.content = newList }
+        return CustomSet(content + other.content)
     }
 
     operator fun minus(other: CustomSet): CustomSet {
-        val newList = content.toMutableList()
-        newList.removeAll(other.content)
-        return CustomSet().apply { this.content = newList }
+        return CustomSet(content - other.content)
     }
 }
