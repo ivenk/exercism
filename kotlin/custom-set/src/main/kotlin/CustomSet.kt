@@ -1,10 +1,8 @@
-class CustomSet(vararg input: Int) {
+class CustomSet(content: List<Int>) {
 
-    var content: MutableList<Int> = input.toMutableList()
+    var content = content.toMutableList()
 
-    constructor(inputList : List<Int>) {
-        content = inputList.toMutableList()
-    }
+    constructor(vararg input: Int) : this(input.toList())
 
     fun isEmpty(): Boolean {
         return content.isEmpty()
@@ -31,8 +29,10 @@ class CustomSet(vararg input: Int) {
     }
 
     override fun equals(other: Any?): Boolean {
-        return if (other is CustomSet) content == content
-        else false
+        println(content.toList())
+        if (other is CustomSet) println(other.content.toList())
+
+        return if (other is CustomSet) other.content == this.content else false
     }
 
     operator fun plus(other: CustomSet): CustomSet {
