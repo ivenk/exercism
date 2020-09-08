@@ -2,6 +2,10 @@ class CustomSet(vararg input: Int) {
 
     var content: MutableList<Int> = input.toMutableList()
 
+    constructor(inputList : List<Int>) {
+        content = inputList.toMutableList()
+    }
+
     fun isEmpty(): Boolean {
         return content.isEmpty()
     }
@@ -19,7 +23,7 @@ class CustomSet(vararg input: Int) {
     }
 
     fun intersection(other: CustomSet): CustomSet {
-        throw NotImplementedError();
+        return CustomSet(content.filter { other.contains(it) });
     }
 
     fun add(other: Int) {
