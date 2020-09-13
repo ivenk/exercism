@@ -3,7 +3,7 @@ object Luhn {
     fun isValid(candidate: String): Boolean {
         if (candidate.trim().length < 2) return false
         var trimed = candidate.replace(" ", "")
-        if(trimed.any {it.toString().toIntOrNull() == null}) {
+        if(trimed.any {!it.isDigit()}) {
             return false
         }
 
