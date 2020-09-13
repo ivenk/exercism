@@ -1,17 +1,22 @@
 object Luhn {
 
     fun isValid(candidate: String): Boolean {
-        if (candidate.length < 2) return false
+        if (candidate.trim().length < 2) return false
+        var trimed = candidate.replace(" ", "")
+        if(trimed.any {it.toString().toIntOrNull() == null}) {
+            return false
+        }
 
-        return candidate
+        return trimed
                 .filter { it.toString().toIntOrNull() != null }
                 .map { it.toString().toInt() }
+                .reversed()
                 .withIndex()
-                .map { if (it.index.rem(2) == 0) it.value.doubleWithCap() else it.value }
+                .map { if (it.index.rem(2) == 1) it.value.doubleWithCap() else it.value }
                 .sum().rem(10) == 0
     }
 
-    fun Int.doubleWithCap(): Int {
+    private fun Int.doubleWithCap(): Int {
         val doubled = this.times(2)
         return if (doubled > 9) doubled - 9 else doubled
     }
