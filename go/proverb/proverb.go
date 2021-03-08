@@ -1,8 +1,4 @@
-// This is a "stub" file.  It's a little start on your solution.
-// It's not a complete solution though; you have to write some code.
-
-// Package proverb should have a package comment that summarizes what it's about.
-// https://golang.org/doc/effective_go.html#commentary
+// Prints a poem
 package proverb
 
 import "fmt"
@@ -10,14 +6,17 @@ import "fmt"
 const line = "For want of a %s the %s was lost."
 const ending = "And all for the want of a %s."
 
-// Proverb should have a comment documenting it.
+// Proverb prints a poem using the rhymes provided
 func Proverb(rhyme []string) []string {
-	fmt.Println(len(rhyme))
-
 	var poem []string
+	var lastThing string
 
-	for i := 0; i < len(rhyme)-1; i = i+2 {
-		poem = append(poem, fmt.Sprintf(line, rhyme[i-1], rhyme[i]))
+	for _, thing := range rhyme {
+		// the first item in the list is skipped
+		if len(lastThing) != 0 {
+			poem = append(poem, fmt.Sprintf(line, lastThing, thing))
+		}
+		lastThing = thing
 	}
 
 	// don't need an ending if there is no poem
@@ -25,5 +24,5 @@ func Proverb(rhyme []string) []string {
 		return poem
 	}
 
-	return append(poem, fmt.Sprintf(ending, rhyme[len(rhyme)-1]))
+	return append(poem, fmt.Sprintf(ending, rhyme[0]))
 }
