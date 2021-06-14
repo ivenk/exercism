@@ -1,18 +1,17 @@
-class Series(series: String) {
-
-    private val numbers = series.trim().map { it.toString().toInt() }
+/* Solution inspired by the amazing solutions of GrahamsLea and cowlike */
+class Series(val series: String) {
+    init {
+        // only accepting numerical strings
+        require(series.all { it.isDigit() })
+    }
 
     fun getLargestProduct(span: Int): Long {
-        if (span > numbers.size) throw IllegalArgumentException("Fail")
-
-        if (span == 0) return numbers.getOrElse(0) { 1 }.toLong()
-
-        var max = 0L
-        numbers.forEachIndexed { index, _ ->
-            if (index + span > numbers.size) return@forEachIndexed
-            val sum = numbers.subList(index, index + span).reduce { x, y -> x * y }.toLong()
-            max = maxOf(max, sum)
+        return when {
+            span > series.length -> throw IllegalArgumentException("fail")
+            span == 0 -> 1L
+            else -> series.windowed(span, 1, false) {
+                it.fold(1L) { x, y -> x * Character.getNumericValue(y) }
+            }.max()?: 1L
         }
-        return max;
     }
 }
